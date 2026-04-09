@@ -1,15 +1,12 @@
-import React, {useState} from 'react';
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import React from 'react';
+import { Table, Row, } from 'react-native-table-component';
 
 import {
-    SafeAreaView,
     ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
     TextInput,
     Button,
-    useColorScheme,
     View,
   } from 'react-native';
 
