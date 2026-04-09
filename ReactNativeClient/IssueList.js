@@ -8,6 +8,7 @@ import {
     TextInput,
     Button,
     View,
+    TouchableOpacity,
   } from 'react-native';
 
   const dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
@@ -77,6 +78,29 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 8,
     marginBottom: 8,
+  },
+  tabBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: '#f3f3f3',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+  },
+  tabButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  tabButtonActive: {
+    backgroundColor: '#537791',
+  },
+  tabButtonText: {
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  tabButtonTextActive: {
+    color: '#fff',
   },
 });
 
@@ -297,13 +321,18 @@ class BlackList extends React.Component {
 export default class IssueList extends React.Component {
     constructor() {
         super();
-        this.state = { issues: [] };
+        this.state = { issues: [], activeTab: 'issueList' };
         this.createIssue = this.createIssue.bind(this);
         this.addToBlacklist = this.addToBlacklist.bind(this);
+        this.setActiveTab = this.setActiveTab.bind(this);
     }
     
     componentDidMount() {
      this.loadData();
+    }
+
+    setActiveTab(tab) {
+      this.setState({ activeTab: tab });
     }
 
     async loadData() {
@@ -347,23 +376,47 @@ export default class IssueList extends React.Component {
     render() {
       return (
       <ScrollView>
-      {/****** Q1: Start Coding here. ******/}
-      <IssueFilter />
-      {/****** Q1: Code ends here ******/}
+        <View style={styles.tabBar}>
+          <TouchableOpacity
+            style={[styles.tabButton, this.state.activeTab === 'issueList' && styles.tabButtonActive]}
+            onPress={() => this.setActiveTab('issueList')}
+          >
+            <Text style={[styles.tabButtonText, this.state.activeTab === 'issueList' && styles.tabButtonTextActive]}>
+              Issue List
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabButton, this.state.activeTab === 'issueAdd' && styles.tabButtonActive]}
+            onPress={() => this.setActiveTab('issueAdd')}
+          >
+            <Text style={[styles.tabButtonText, this.state.activeTab === 'issueAdd' && styles.tabButtonTextActive]}>
+              Issue Add
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabButton, this.state.activeTab === 'blacklist' && styles.tabButtonActive]}
+            onPress={() => this.setActiveTab('blacklist')}
+          >
+            <Text style={[styles.tabButtonText, this.state.activeTab === 'blacklist' && styles.tabButtonTextActive]}>
+              Blacklist
+            </Text>
+          </TouchableOpacity>
+        </View>
 
+        {this.state.activeTab === 'issueList' && (
+          <>
+            <IssueFilter />
+            <IssueTable issues={this.state.issues} />
+          </>
+        )}
 
-      {/****** Q2: Start Coding here. ******/}
-      <IssueTable issues={this.state.issues} />
-      {/****** Q2: Code ends here ******/}
+        {this.state.activeTab === 'issueAdd' && (
+          <IssueAdd createIssue={this.createIssue} />
+        )}
 
-      
-      {/****** Q3: Start Coding here. ******/}
-      <IssueAdd createIssue={this.createIssue} />
-      {/****** Q3: Code Ends here. ******/}
-
-      {/****** Q4: Start Coding here. ******/}
-      <BlackList addToBlacklist={this.addToBlacklist} />
-      {/****** Q4: Code Ends here. ******/}
+        {this.state.activeTab === 'blacklist' && (
+          <BlackList addToBlacklist={this.addToBlacklist} />
+        )}
       </ScrollView>
     );
   }
