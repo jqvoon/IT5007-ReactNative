@@ -256,27 +256,44 @@ function IssueRow(props) {
   }
 
 class BlackList extends React.Component {
-    constructor()
-    {   super();
-        this.handleSubmit = this.handleSubmit.bind(this);
-        /****** Q4: Start Coding here. Create State to hold inputs******/
-        /****** Q4: Code Ends here. ******/
+    constructor() {
+      super();
+      this.handleSubmit = this.handleSubmit.bind(this);
+      this.state = {
+        ownerInput: '',
+      };
     }
-    /****** Q4: Start Coding here. Add functions to hold/set state input based on changes in TextInput******/
-    /****** Q4: Code Ends here. ******/
+
+    handleOwnerChange(text) {
+      this.setState({ ownerInput: text });
+    }
 
     async handleSubmit() {
-    /****** Q4: Start Coding here. Create an issue from state variables and issue a query. Also, clear input field in front-end******/
-    /****** Q4: Code Ends here. ******/
+      const { ownerInput } = this.state;
+      if (!ownerInput.trim()) {
+        alert('Owner name is required.');
+        return;
+      }
+
+      if (this.props.addToBlacklist) this.props.addToBlacklist(ownerInput.trim());
+      this.setState({ ownerInput: '' });
     }
 
     render() {
-    return (
-        <View>
-        {/****** Q4: Start Coding here. Create TextInput field, populate state variables. Create a submit button, and on submit, trigger handleSubmit.*******/}
-        {/****** Q4: Code Ends here. ******/}
+      return (
+        <View style={styles.container}>
+          <Text style={styles.label}>Blacklist Owner</Text>
+          <TextInput
+            style={styles.input}
+            value={this.state.ownerInput}
+            onChangeText={(text) => this.handleOwnerChange(text)}
+            placeholder="Enter owner name"
+          />
+          <View style={{ marginTop: 10 }}>
+            <Button title="Add to Blacklist" onPress={this.handleSubmit} />
+          </View>
         </View>
-    );
+      );
     }
 }
 
@@ -285,38 +302,51 @@ export default class IssueList extends React.Component {
         super();
         this.state = { issues: [] };
         this.createIssue = this.createIssue.bind(this);
+        this.addToBlacklist = this.addToBlacklist.bind(this);
     }
     
     componentDidMount() {
-    this.loadData();
+     this.loadData();
     }
 
     async loadData() {
-    const query = `query {
-        issueList {
-        id title status owner
-        created effort due
-        }
-    }`;
+      const query = `query {
+          issueList {
+          id title status owner
+          created effort due
+          }
+      }`;
 
-    const data = await graphQLFetch(query);
-    if (data) {
-        this.setState({ issues: data.issueList });
-    }
+      const data = await graphQLFetch(query);
+      if (data) {
+          this.setState({ issues: data.issueList });
+      }
     }
 
     async createIssue(issue) {
-    const query = `mutation issueAdd($issue: IssueInputs!) {
-        issueAdd(issue: $issue) {
-        id
-        }
-    }`;
+      const query = `mutation issueAdd($issue: IssueInputs!) {
+          issueAdd(issue: $issue) {
+          id
+          }
+      }`;
 
-    const data = await graphQLFetch(query, { issue });
-    if (data) {
-        this.loadData();
+      const data = await graphQLFetch(query, { issue });
+      if (data) {
+          this.loadData();
+      }
     }
+
+    async addToBlacklist(ownerInput) {
+      const query = `mutation addToBlacklist($nameInput: String!) {
+        addToBlacklist(nameInput: $nameInput)
+      }`;
+
+      const data = await graphQLFetch(query, { nameInput: ownerInput });
+      if (data) {
+        alert(`Added ${ownerInput} to blacklist.`);
+      }
     }
+
     render() {
       return (
       <ScrollView>
@@ -335,6 +365,7 @@ export default class IssueList extends React.Component {
       {/****** Q3: Code Ends here. ******/}
 
       {/****** Q4: Start Coding here. ******/}
+      <BlackList addToBlacklist={this.addToBlacklist} />
       {/****** Q4: Code Ends here. ******/}
       </ScrollView>
     );
