@@ -1,9 +1,9 @@
 import React from 'react';
 import { Table, Row, } from 'react-native-table-component';
+import styles from './styles';
 
 import {
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     Button,
@@ -59,50 +59,7 @@ class IssueFilter extends React.Component {
     }
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-  header: { height: 50, backgroundColor: '#537791' },
-  text: { textAlign: 'center' },
-  wrappedText: { textAlign: 'center', flexWrap: 'wrap', paddingHorizontal: 8, paddingVertical: 6 },
-  dataWrapper: { marginTop: -1 },
-  row: { height: 60, backgroundColor: '#E7E6E1' },
 
-  label: {
-    fontWeight: 'bold',
-    marginTop: 10,
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#999',
-    borderRadius: 4,
-    padding: 8,
-    marginBottom: 8,
-  },
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#f3f3f3',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-  },
-  tabButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-  },
-  tabButtonActive: {
-    backgroundColor: '#537791',
-  },
-  tabButtonText: {
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  tabButtonTextActive: {
-    color: '#fff',
-  },
-});
 
 const width= [40,80,80,80,80,80,200];
 
@@ -143,7 +100,7 @@ function IssueRow(props) {
     <View style={styles.container}>
       <ScrollView horizontal>
         <View>
-        <Table borderStyle={{ borderWidth: 1 }}>
+        <Table borderStyle={styles.tableContainer}>
             <Row data={tableHead} widthArr={width} style={styles.header} textStyle={styles.text} />
               {issueRows}
           </Table>
@@ -268,7 +225,7 @@ function IssueRow(props) {
             keyboardType="numeric"
           />
 
-          <View style={{ marginTop: 10 }}>
+          <View style={styles.buttonContainer}>
             <Button title="Add Issue" onPress={this.handleSubmit} />
           </View>
         </View>
@@ -310,7 +267,7 @@ class BlackList extends React.Component {
             onChangeText={(text) => this.handleOwnerChange(text)}
             placeholder="Enter owner name"
           />
-          <View style={{ marginTop: 10 }}>
+          <View style={styles.buttonContainer}>
             <Button title="Add to Blacklist" onPress={this.handleSubmit} />
           </View>
         </View>

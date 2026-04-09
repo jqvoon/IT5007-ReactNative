@@ -1,12 +1,13 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import IssueList from './IssueList';
+import styles from './styles';
 
 export default class App extends React.Component {
   render() {
     return (
-      <View style={{ flex: 1, padding: 20 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10 }}>
+      <View style={styles.appContainer}>
+        <Text style={styles.appTitle}>
           Issue Tracker
         </Text>
         <IssueList />
