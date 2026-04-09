@@ -225,9 +225,9 @@ function IssueRow(props) {
             keyboardType="numeric"
           />
 
-          <View style={styles.buttonContainer}>
-            <Button title="Add Issue" onPress={this.handleSubmit} />
-          </View>
+          <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
+            <Text style={styles.buttonText}>Add Issue</Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -267,9 +267,9 @@ class BlackList extends React.Component {
             onChangeText={(text) => this.handleOwnerChange(text)}
             placeholder="Enter owner name"
           />
-          <View style={styles.buttonContainer}>
-            <Button title="Add to Blacklist" onPress={this.handleSubmit} />
-          </View>
+          <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
+            <Text style={styles.buttonText}>Add to Blacklist</Text>
+          </TouchableOpacity>
         </View>
       );
     }
