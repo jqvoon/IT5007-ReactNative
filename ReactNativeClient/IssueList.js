@@ -62,13 +62,26 @@ class IssueFilter extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
   header: { height: 50, backgroundColor: '#537791' },
   text: { textAlign: 'center' },
   wrappedText: { textAlign: 'center', flexWrap: 'wrap', paddingHorizontal: 8, paddingVertical: 6 },
   dataWrapper: { marginTop: -1 },
-  row: { height: 60, backgroundColor: '#E7E6E1' }
-  });
+  row: { height: 60, backgroundColor: '#E7E6E1' },
+
+  label: {
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 4,
+    padding: 8,
+    marginBottom: 8,
+  },
+});
 
 const width= [40,80,80,80,80,80,200];
 
@@ -111,9 +124,7 @@ function IssueRow(props) {
         <View>
         <Table borderStyle={{ borderWidth: 1 }}>
             <Row data={tableHead} widthArr={width} style={styles.header} textStyle={styles.text} />
-            <ScrollView>
               {issueRows}
-            </ScrollView>
           </Table>
         </View>
       </ScrollView>
@@ -126,24 +137,120 @@ function IssueRow(props) {
     constructor() {
       super();
       this.handleSubmit = this.handleSubmit.bind(this);
-      /****** Q3: Start Coding here. Create State to hold inputs******/
-      /****** Q3: Code Ends here. ******/
+       this.state = {
+        owner: '',
+        effort: '',
+        title: '',
+        due: '', // optional, format: YYYY-MM-DD
+      };
     }
   
     /****** Q3: Start Coding here. Add functions to hold/set state input based on changes in TextInput******/
     /****** Q3: Code Ends here. ******/
     
     handleSubmit() {
-      /****** Q3: Start Coding here. Create an issue from state variables and call createIssue. Also, clear input field in front-end******/
-      /****** Q3: Code Ends here. ******/
+      // Create an issue from state variables and call createIssue.
+      const { owner, effort, title, due } = this.state;
+
+      // If blank input, alert and return
+      if (!owner.trim() || !effort.trim() || !title.trim()) {
+        alert('Owner, Effort, and Title are required.');
+        return;
+      }
+
+      // Validate effort is a positive Number
+      const positiveNumber = /^[1-9][0-9]*$/;
+      if (!positiveNumber.test(effort)) {
+        alert('Effort must be a positive Number.');
+        return;
+      }
+
+      if (due) {
+        const dateOnly = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateOnly.test(due)) {
+          // Validate due date format if provided
+          alert('Due date must be in YYYY-MM-DD format.');
+          return;
+        } else {
+          // Ensure due date is today or later
+          const dueDate = new Date(`${due}T00:00:00`);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          if (dueDate < today) {
+            alert('Due date must be today or later.');
+            return;
+          }
+        }
+      }
+
+      const newIssue = {
+        owner: owner.trim(),
+        effort: parseInt(effort, 10),
+        title: title.trim(),
+        due: due ? new Date(`${due}T00:00:00`) : null,
+      };
+
+      if (this.props.createIssue) this.props.createIssue(newIssue);
+
+      // Clear state after submission
+      this.setState({
+        owner: '',
+        effort: '',
+        title: '',
+        due: ''
+      });
     }
   
     render() {
+      const { owner, effort, title, due } = this.state;
       return (
-          <View>
-          {/****** Q3: Start Coding here. Create TextInput field, populate state variables. Create a submit button, and on submit, trigger handleSubmit.*******/}
-          {/****** Q3: Code Ends here. ******/}
+        <View style={styles.container}>
+          <Text style={styles.label}>Owner*</Text>
+          <TextInput
+            style={styles.input}
+            value={owner}
+            onChangeText={(text) => this.setState({ owner: text })}
+            placeholder="Owner name"
+          />
+
+          <Text style={styles.label}>Effort*</Text>
+          <TextInput
+            style={styles.input}
+            value={effort}
+            onChangeText={(text) => {
+              if (/^[0-9]*$/.test(text)) {
+                this.setState({ effort: text });
+              }
+            }}
+            placeholder="Effort (positive number)"
+            keyboardType="numeric"
+          />
+
+          <Text style={styles.label}>Title*</Text>
+          <TextInput
+            style={styles.input}
+            value={title}
+            onChangeText={(text) => this.setState({ title: text })}
+            placeholder="Issue title"
+          />
+
+          <Text style={styles.label}>Due Date</Text>
+          <TextInput
+            style={styles.input}
+            value={due}
+            onChangeText={(text) => {
+              if (/^[0-9-]*$/.test(text)) {
+                this.setState({ due: text });
+              }
+            }}
+            placeholder="YYYY-MM-DD"
+            keyboardType="numeric"
+          />
+
+          <View style={{ marginTop: 10 }}>
+            <Button title="Add Issue" onPress={this.handleSubmit} />
           </View>
+        </View>
       );
     }
   }
@@ -212,7 +319,7 @@ export default class IssueList extends React.Component {
     }
     render() {
       return (
-      <>
+      <ScrollView>
       {/****** Q1: Start Coding here. ******/}
       <IssueFilter />
       {/****** Q1: Code ends here ******/}
@@ -224,11 +331,12 @@ export default class IssueList extends React.Component {
 
       
       {/****** Q3: Start Coding here. ******/}
+      <IssueAdd createIssue={this.createIssue} />
       {/****** Q3: Code Ends here. ******/}
 
       {/****** Q4: Start Coding here. ******/}
       {/****** Q4: Code Ends here. ******/}
-      </>
+      </ScrollView>
     );
   }
 }
