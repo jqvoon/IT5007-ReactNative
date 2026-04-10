@@ -7,12 +7,6 @@ const { MongoClient } = require('mongodb');
 
 const url = 'mongodb://localhost/issuetracker';
 
-// Atlas URL  - replace UUU with user, PPP with password, XXX with hostname
-// const url = 'mongodb+srv://UUU:PPP@cluster0-XXX.mongodb.net/issuetracker?retryWrites=true';
-
-// mLab URL - replace UUU with user, PPP with password, XXX with hostname
-// const url = 'mongodb://UUU:PPP@XXX.mlab.com:33533/issuetracker';
-
 let db;
 
 let aboutMessage = "Issue Tracker API v1.0";
